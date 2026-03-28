@@ -45,8 +45,8 @@
                                        TextTrimming="None"
                                        TextWrapping="Wrap"/>
 
-                            <!-- Управление: unlock + lvl — адаптивная сетка -->
-                            <Grid ColumnDefinitions="*,*">
+                            <!-- Управление: unlock + lvl + score — адаптивная сетка -->
+                            <Grid ColumnDefinitions="*,*,*">
                                 <!-- Разблокировка -->
                                 <StackPanel Orientation="Horizontal"
                                             Spacing="8" VerticalAlignment="Center"
@@ -66,6 +66,18 @@
                                     <NumericUpDown Value="{Binding Level}"
                                                    Minimum="1" Maximum="20"
                                                    MinWidth="90" FontSize="13"
+                                                   HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+
+                                <!-- Рекорд -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                            Spacing="4" VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock Text="SCORE" FontSize="10"
+                                               Foreground="#808080" VerticalAlignment="Center"/>
+                                    <NumericUpDown Value="{Binding HighScore}"
+                                                   Minimum="0" Maximum="999999999"
+                                                   MinWidth="110" FontSize="13"
                                                    HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                             </Grid>

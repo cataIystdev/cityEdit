@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityEdit.ViewModels"
+             xmlns:items="using:CityEdit.ViewModels.Items"
+             x:Class="CityEdit.Views.FlagsView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="heading" Text="FLAGS" Margin="0,0,0,16"/>
+
+        <Border Classes="card">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Flags}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="items:FlagItemViewModel">
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center" FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Foreground="#C0C0C0"
+                                           Margin="0,0,8,0"/>
+                                <ToggleSwitch Grid.Column="1"
+                                              IsChecked="{Binding Value}"
+                                              HorizontalAlignment="Right"
+                                              Margin="0"
+                                              Padding="0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
+</UserControl>

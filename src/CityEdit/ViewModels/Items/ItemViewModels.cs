@@ -352,6 +352,16 @@ public class PurchaseItemViewModel
     public int DateIndex { get; }
 
     /// <summary>
+    /// Описание покупки из базы данных.
+    /// </summary>
+    public string Description { get; }
+
+    /// <summary>
+    /// Категория покупки из базы данных.
+    /// </summary>
+    public string Category { get; }
+
+    /// <summary>
     /// Отображаемая строка покупки.
     /// </summary>
     public string Display => $"{ProductId} - {PurchaseDate}";
@@ -364,5 +374,46 @@ public class PurchaseItemViewModel
         ProductId = productId;
         PurchaseDate = purchaseDate;
         DateIndex = dateIndex;
+        if (PurchaseDatabase.ByProductId.TryGetValue(productId, out var entry))
+        {
+            Description = entry.Description;
+            Category = entry.Category;
+        }
+        else
+        {
+            Description = productId;
+            Category = "Unknown";
+        }
+    }
+}
+
+/// <summary>
+/// ViewModel записи флага профиля.
+/// </summary>
+public partial class FlagItemViewModel : ObservableObject
+{
+    private readonly ProfileService _profileService;
+
+    /// <summary>
+    /// Имя флага.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Значение флага.
+    /// </summary>
+    [ObservableProperty]
+    private bool _value;
+
+    public FlagItemViewModel(string name, bool value, ProfileService profileService)
+    {
+        Name = name;
+        _value = value;
+        _profileService = profileService;
+    }
+
+    partial void OnValueChanged(bool value)
+    {
+        _profileService.SetFlag(Name, value);
     }
 }

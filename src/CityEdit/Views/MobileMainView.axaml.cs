@@ -46,6 +46,7 @@ public partial class MobileMainView : UserControl
         _tabs[4] = this.FindControl<ScrollViewer>("WalletTab");
         _tabs[5] = this.FindControl<ScrollViewer>("PurchasesTab");
         _tabs[6] = this.FindControl<ScrollViewer>("SeasonTab");
+        _tabs[7] = this.FindControl<ScrollViewer>("FlagsTab");
 
         CollectNavButtons();
         SwitchToTab(0);

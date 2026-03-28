@@ -12,11 +12,12 @@ public static class BoardDatabase
 {
     /// <summary>
     /// Словарь: DataTag доски -> имя доски.
-    /// Все 26 игровых досок.
+    /// Все 27 игровых досок.
     /// </summary>
     public static readonly ReadOnlyDictionary<int, string> Names = new(new Dictionary<int, string>
     {
-        { 857306595, "Home Runner" },
+        { 857306595, "Electric Blue" },
+        { -1398156391, "Home Runner" },
         { 821107692, "Trasher" },
         { 1016074756, "Peace Of Grind" },
         { 797961277, "Naughty & Nice" },
@@ -75,7 +76,8 @@ public static class BoardDatabase
         { -2028224723, 1936280213 },       // Djinn's Fortune -> Prince K
         { -282672473, 135046766 },         // Flame Tamer -> Monique
         { 463203314, -502265868 },         // Knockout -> Noon
-        { 1092080220, 823378763 }          // Pawsome -> Harini
+        { 1092080220, 823378763 },         // Pawsome -> Harini
+        { -1398156391, 966716028 }           // Home Runner -> Ash
     });
 
     /// <summary>

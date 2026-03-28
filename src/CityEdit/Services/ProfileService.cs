@@ -729,4 +729,132 @@ public class ProfileService
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         });
     }
+
+    // ========== Флаги ==========
+
+    /// <summary>
+    /// Возвращает словарь всех флагов профиля.
+    /// </summary>
+    public Dictionary<string, bool> GetFlags()
+    {
+        var flags = new Dictionary<string, bool>();
+        if (_profileDict == null) return flags;
+
+        if (_profileDict.TryGetValue("flags", out var flagsEl))
+        {
+            foreach (var prop in flagsEl.EnumerateObject())
+            {
+                flags[prop.Name] = prop.Value.ValueKind == JsonValueKind.True;
+            }
+        }
+        return flags;
+    }
+
+    /// <summary>
+    /// Устанавливает значение флага.
+    /// </summary>
+    public void SetFlag(string flagName, bool value)
+    {
+        if (_profileDict == null) return;
+
+        var flags = GetFlags();
+        flags[flagName] = value;
+        _profileDict["flags"] = JsonSerializer.SerializeToElement(flags);
+        HasChanges = true;
+    }
+
+    // ========== Выбор активного серфера/доски ==========
+
+    /// <summary>
+    /// Возвращает DataTag текущей выбранной доски.
+    /// </summary>
+    public int GetSelectedBoardId()
+    {
+        if (_profileDict == null) return 0;
+        return _profileDict.TryGetValue("selectedBoard", out var el) ? el.GetInt32() : 0;
+    }
+
+    /// <summary>
+    /// Устанавливает выбранную доску.
+    /// </summary>
+    public void SetSelectedBoard(int boardDataTag)
+    {
+        if (_profileDict == null) return;
+        _profileDict["selectedBoard"] = JsonSerializer.SerializeToElement(boardDataTag);
+        HasChanges = true;
+    }
+
+    /// <summary>
+    /// Возвращает DataTag текущего выбранного серфера (по isSelected в surferProfiles).
+    /// </summary>
+    public int GetSelectedSurferId()
+    {
+        if (_profileDict == null) return 0;
+        var surfers = GetSurferProfiles();
+        foreach (var s in surfers)
+        {
+            if (s.TryGetValue("isSelected", out var sel) && sel.ValueKind == JsonValueKind.True)
+            {
+                return s.TryGetValue("id", out var id) ? id.GetInt32() : 0;
+            }
+        }
+        return 0;
+    }
+
+    /// <summary>
+    /// Устанавливает выбранного серфера (isSelected = true для указанного, false для остальных).
+    /// </summary>
+    public void SetSelectedSurfer(int surferDataTag)
+    {
+        if (_profileDict == null) return;
+
+        var surfers = GetSurferProfiles();
+        for (int i = 0; i < surfers.Count; i++)
+        {
+            bool isTarget = surfers[i].TryGetValue("id", out var id) && id.GetInt32() == surferDataTag;
+            surfers[i]["isSelected"] = JsonSerializer.SerializeToElement(isTarget);
+        }
+        _profileDict["surferProfiles"] = SerializeListOfDicts(surfers);
+        HasChanges = true;
+    }
+
+    // ========== Туториал ==========
+
+    /// <summary>
+    /// Возвращает текущий шаг туториала.
+    /// </summary>
+    public int GetTutorialStep()
+    {
+        if (_profileDict == null) return 0;
+        return _profileDict.TryGetValue("tutorialStep", out var el) ? el.GetInt32() : 0;
+    }
+
+    /// <summary>
+    /// Устанавливает шаг туториала (5 = завершён).
+    /// </summary>
+    public void SetTutorialStep(int step)
+    {
+        if (_profileDict == null) return;
+        _profileDict["tutorialStep"] = JsonSerializer.SerializeToElement(step);
+        HasChanges = true;
+    }
+
+    /// <summary>
+    /// Получает произвольное целое значение из профиля.
+    /// </summary>
+    public int GetIntValue(string key, int defaultValue = 0)
+    {
+        if (_profileDict == null) return defaultValue;
+        return _profileDict.TryGetValue(key, out var el) ? el.GetInt32() : defaultValue;
+    }
+
+    /// <summary>
+    /// Устанавливает произвольное целое значение в профиль.
+    /// </summary>
+    public void SetIntValue(string key, int value)
+    {
+        if (_profileDict == null) return;
+        _profileDict[key] = JsonSerializer.SerializeToElement(value);
+        HasChanges = true;
+    }
 }

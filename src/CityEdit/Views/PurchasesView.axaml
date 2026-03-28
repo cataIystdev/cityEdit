@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:CityEdit.ViewModels"
              xmlns:items="using:CityEdit.ViewModels.Items"
+             xmlns:gd="using:CityEdit.Models.GameData"
              x:Class="CityEdit.Views.PurchasesView"
              x:DataType="vm:MainWindowViewModel">
 
@@ -12,11 +13,41 @@
         <Border DockPanel.Dock="Top" Classes="card" Margin="0,0,0,12">
             <StackPanel Spacing="8">
                 <TextBlock Text="ADD PURCHASE" FontSize="10" Foreground="#808080"/>
-                <!-- ComboBox на полную ширину -->
-                <ComboBox ItemsSource="{Binding AvailablePurchaseIds}"
-                          SelectedItem="{Binding SelectedPurchaseId}"
+
+                <!-- Поиск и фильтр категории -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                    <TextBox Text="{Binding PurchaseSearchText}"
+                             Watermark="Search by ID or description..."
+                             FontSize="12"
+                             HorizontalAlignment="Stretch"/>
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding PurchaseCategories}"
+                              SelectedItem="{Binding SelectedPurchaseCategory}"
+                              MinWidth="130" FontSize="11"
+                              Margin="6,0,0,0"/>
+                </Grid>
+
+                <!-- Список покупок -->
+                <ComboBox ItemsSource="{Binding FilteredPurchaseEntries}"
+                          SelectedItem="{Binding SelectedPurchaseEntry}"
                           HorizontalAlignment="Stretch"
-                          IsEditable="False"/>
+                          IsEditable="False"
+                          MaxDropDownHeight="300">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="gd:PurchaseEntry">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="{Binding Description}"
+                                           FontSize="12" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Category}"
+                                           FontSize="9" Foreground="#606060"
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
                 <!-- Кнопки управления — адаптивно через WrapPanel -->
                 <WrapPanel Orientation="Horizontal">
                     <Button Content="ADD"
@@ -29,6 +60,10 @@
                             Margin="0,0,4,4"/>
                     <Button Content="PREMIUM PASS"
                             Command="{Binding ActivateSeasonPassCommand}"
+                            Padding="16,6" FontSize="10"
+                            Margin="0,0,4,4"/>
+                    <Button Content="BONUS TRACKS"
+                            Command="{Binding UnlockBonusTracksCommand}"
                             Padding="16,6" FontSize="10"
                             Margin="0,0,4,4"/>
                 </WrapPanel>
@@ -49,12 +84,21 @@
                      MinHeight="200">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="items:PurchaseItemViewModel">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="{Binding ProductId}"
-                                       FontSize="12" VerticalAlignment="Center"
-                                       TextWrapping="Wrap"
-                                       TextTrimming="None"/>
-                            <TextBlock Grid.Column="1" Text="{Binding PurchaseDate}"
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <StackPanel>
+                                <TextBlock Text="{Binding ProductId}"
+                                           FontSize="12" VerticalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="None"/>
+                                <TextBlock Text="{Binding Description}"
+                                           FontSize="10" Foreground="#888888"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding Category}"
+                                       FontSize="9" Foreground="#606060"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
+                            <TextBlock Grid.Column="2" Text="{Binding PurchaseDate}"
                                        FontSize="10" Foreground="#808080"
                                        VerticalAlignment="Center"
                                        Margin="8,0,0,0"/>

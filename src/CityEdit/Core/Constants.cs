@@ -19,7 +19,7 @@ public static class Constants
     /// <summary>
     /// Текущая версия приложения.
     /// </summary>
-    public const string AppVersion = "v1.0.1";
+    public const string AppVersion = "v1.1.0";
 
     /// <summary>
     /// Имя разработчика.

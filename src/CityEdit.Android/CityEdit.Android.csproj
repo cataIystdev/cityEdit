@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <ApplicationId>com.catalyst.cityedit</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
-    <ApplicationDisplayVersion>1.0.1</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
     <ApplicationTitle>CityEdit</ApplicationTitle>
     <Nullable>enable</Nullable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>

@@ -24,3 +24,8 @@ dists/
 # Agent/AI
 .agent/
 .agents/
+
+# Game APK and raw textures (too large for git)
+tools/game_apk/
+tools/icons/raw/
+tools/debug_output.txt

@@ -44,7 +44,8 @@ public partial class MainWindow : Window
             this.FindControl<ScrollViewer>("StatsTab"),
             this.FindControl<ScrollViewer>("WalletTab"),
             this.FindControl<ScrollViewer>("PurchasesTab"),
-            this.FindControl<ScrollViewer>("SeasonTab")
+            this.FindControl<ScrollViewer>("SeasonTab"),
+            this.FindControl<ScrollViewer>("FlagsTab")
         };
 
         _navButtons = CollectNavButtons();

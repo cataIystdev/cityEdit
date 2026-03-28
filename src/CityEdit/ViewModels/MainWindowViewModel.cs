@@ -134,15 +134,32 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PurchaseItemViewModel> Purchases { get; } = new();
 
     /// <summary>
-    /// Список доступных ProductID для добавления покупок.
+    /// Список доступных покупок для добавления (отфильтрованный).
     /// </summary>
-    public ObservableCollection<string> AvailablePurchaseIds { get; } = new();
+    public ObservableCollection<PurchaseEntry> FilteredPurchaseEntries { get; } = new();
 
     /// <summary>
-    /// Выбранный ProductID для добавления.
+    /// Выбранная покупка для добавления.
     /// </summary>
     [ObservableProperty]
-    private string? _selectedPurchaseId;
+    private PurchaseEntry? _selectedPurchaseEntry;
+
+    /// <summary>
+    /// Текст поиска покупок.
+    /// </summary>
+    [ObservableProperty]
+    private string _purchaseSearchText = "";
+
+    /// <summary>
+    /// Выбранная категория покупок.
+    /// </summary>
+    [ObservableProperty]
+    private string _selectedPurchaseCategory = "All";
+
+    /// <summary>
+    /// Список категорий покупок.
+    /// </summary>
+    public ObservableCollection<string> PurchaseCategories { get; } = new();
 
     /// <summary>
     /// Выбранная покупка для удаления.
@@ -164,6 +181,37 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private int _seasonPassPoints;
 
+    // ---- Флаги ----
+
+    /// <summary>
+    /// Список флагов профиля.
+    /// </summary>
+    public ObservableCollection<FlagItemViewModel> Flags { get; } = new();
+
+    // ---- Активный серфер/доска ----
+
+    /// <summary>
+    /// Имя текущего выбранного серфера.
+    /// </summary>
+    [ObservableProperty]
+    private string _selectedSurferName = "—";
+
+    /// <summary>
+    /// Имя текущей выбранной доски.
+    /// </summary>
+    [ObservableProperty]
+    private string _selectedBoardName = "—";
+
+    /// <summary>
+    /// Список имён серферов для выбора.
+    /// </summary>
+    public ObservableCollection<string> SurferNames { get; } = new();
+
+    /// <summary>
+    /// Список имён досок для выбора.
+    /// </summary>
+    public ObservableCollection<string> BoardNames { get; } = new();
+
     // ---- Названия вкладок ----
 
     /// <summary>
@@ -181,17 +229,19 @@ public partial class MainWindowViewModel : ViewModelBase
         IsMobile = isMobile;
 
         TabNames = isMobile
-            ? new[] { "QUICK", "SURFERS", "BOARDS", "STATS", "WALLET", "PURCHASES", "SEASON" }
-            : new[] { "SURFERS", "BOARDS", "STATS", "WALLET", "PURCHASES", "SEASON" };
+            ? new[] { "QUICK", "SURFERS", "BOARDS", "STATS", "WALLET", "PURCHASES", "SEASON", "FLAGS" }
+            : new[] { "SURFERS", "BOARDS", "STATS", "WALLET", "PURCHASES", "SEASON", "FLAGS" };
 
-        foreach (var id in PurchaseDatabase.CommonPurchaseIds)
-        {
-            AvailablePurchaseIds.Add(id);
-        }
-        if (AvailablePurchaseIds.Count > 0)
-        {
-            SelectedPurchaseId = AvailablePurchaseIds[0];
-        }
+        // Инициализируем списки имён серферов и досок
+        foreach (var (_, name) in SurferDatabase.Names)
+            SurferNames.Add(name);
+        foreach (var (_, name) in BoardDatabase.Names)
+            BoardNames.Add(name);
+
+        PurchaseCategories.Add("All");
+        foreach (var cat in PurchaseDatabase.Categories)
+            PurchaseCategories.Add(cat);
+        ApplyPurchaseFilter();
     }
 
     /// <summary>
@@ -675,8 +725,53 @@ public partial class MainWindowViewModel : ViewModelBase
         _profileService.SetMaxCurrency(Constants.MaxCurrencyValue);
         _profileService.SetSeasonPass(true, Constants.MaxSeasonPoints);
         _profileService.AddPurchase(PurchaseDatabase.RemoveAdsId);
+        for (int i = 1; i <= PurchaseDatabase.BonusTrackCount; i++)
+            _profileService.AddPurchase(string.Format(PurchaseDatabase.BonusTrackTemplate, i));
+        _profileService.SetTutorialStep(5);
         RefreshAllTabs();
         MarkChanged("Everything unlocked!");
+    }
+
+    /// <summary>
+    /// Пропускает туториал (устанавливает tutorialStep = 5).
+    /// </summary>
+    [RelayCommand]
+    private void SkipTutorial()
+    {
+        _profileService.SetTutorialStep(5);
+        MarkChanged("Tutorial skipped");
+    }
+
+    /// <summary>
+    /// Устанавливает активного серфера по имени.
+    /// </summary>
+    [RelayCommand]
+    private void SetActiveSurfer(string surferName)
+    {
+        if (string.IsNullOrEmpty(surferName)) return;
+        var entry = SurferDatabase.Names.FirstOrDefault(x => x.Value == surferName);
+        if (entry.Value != null)
+        {
+            _profileService.SetSelectedSurfer(entry.Key);
+            SelectedSurferName = surferName;
+            MarkChanged($"Active surfer: {surferName}");
+        }
+    }
+
+    /// <summary>
+    /// Устанавливает активную доску по имени.
+    /// </summary>
+    [RelayCommand]
+    private void SetActiveBoard(string boardName)
+    {
+        if (string.IsNullOrEmpty(boardName)) return;
+        var entry = BoardDatabase.Names.FirstOrDefault(x => x.Value == boardName);
+        if (entry.Value != null)
+        {
+            _profileService.SetSelectedBoard(entry.Key);
+            SelectedBoardName = boardName;
+            MarkChanged($"Active board: {boardName}");
+        }
     }
 
     // ========== Действия покупок ==========
@@ -687,10 +782,25 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void AddPurchase()
     {
-        if (string.IsNullOrWhiteSpace(SelectedPurchaseId)) return;
-        _profileService.AddPurchase(SelectedPurchaseId);
+        if (SelectedPurchaseEntry == null) return;
+        _profileService.AddPurchase(SelectedPurchaseEntry.ProductId);
         RefreshPurchases();
-        MarkChanged($"Purchase added: {SelectedPurchaseId}");
+        MarkChanged($"Purchase added: {SelectedPurchaseEntry.ProductId}");
+    }
+
+    /// <summary>
+    /// Разблокирует все бонусные трассы (1-16).
+    /// </summary>
+    [RelayCommand]
+    private void UnlockBonusTracks()
+    {
+        for (int i = 1; i <= PurchaseDatabase.BonusTrackCount; i++)
+        {
+            var id = string.Format(PurchaseDatabase.BonusTrackTemplate, i);
+            _profileService.AddPurchase(id);
+        }
+        RefreshPurchases();
+        MarkChanged($"All {PurchaseDatabase.BonusTrackCount} bonus tracks unlocked");
     }
 
     /// <summary>
@@ -700,9 +810,55 @@ public partial class MainWindowViewModel : ViewModelBase
     private void RemoveSelectedPurchase()
     {
         if (SelectedPurchase == null) return;
+        var removedId = SelectedPurchase.ProductId;
         _profileService.RemovePurchase(SelectedPurchase.ProductId, SelectedPurchase.DateIndex);
         RefreshPurchases();
-        MarkChanged($"Purchase removed: {SelectedPurchase.ProductId}");
+        MarkChanged($"Purchase removed: {removedId}");
+    }
+
+    /// <summary>
+    /// Применяет фильтр покупок по категории и поисковому тексту.
+    /// </summary>
+    private void ApplyPurchaseFilter()
+    {
+        FilteredPurchaseEntries.Clear();
+        var results = PurchaseDatabase.GetByCategory(SelectedPurchaseCategory);
+        if (!string.IsNullOrWhiteSpace(PurchaseSearchText))
+        {
+            var q = PurchaseSearchText.Trim();
+            results = results.Where(p =>
+                p.ProductId.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                p.Description.Contains(q, StringComparison.OrdinalIgnoreCase));
+        }
+        foreach (var entry in results)
+            FilteredPurchaseEntries.Add(entry);
+        if (FilteredPurchaseEntries.Count > 0)
+            SelectedPurchaseEntry = FilteredPurchaseEntries[0];
+    }
+
+    partial void OnPurchaseSearchTextChanged(string value) => ApplyPurchaseFilter();
+    partial void OnSelectedPurchaseCategoryChanged(string value) => ApplyPurchaseFilter();
+
+    partial void OnSelectedSurferNameChanged(string value)
+    {
+        if (string.IsNullOrEmpty(value) || value == "—" || !_profileService.IsLoaded) return;
+        var entry = SurferDatabase.Names.FirstOrDefault(x => x.Value == value);
+        if (entry.Value != null)
+        {
+            _profileService.SetSelectedSurfer(entry.Key);
+            MarkChanged($"Active surfer: {value}");
+        }
+    }
+
+    partial void OnSelectedBoardNameChanged(string value)
+    {
+        if (string.IsNullOrEmpty(value) || value == "—" || !_profileService.IsLoaded) return;
+        var entry = BoardDatabase.Names.FirstOrDefault(x => x.Value == value);
+        if (entry.Value != null)
+        {
+            _profileService.SetSelectedBoard(entry.Key);
+            MarkChanged($"Active board: {value}");
+        }
     }
 
     // ========== Обработчики изменения свойств ==========
@@ -735,6 +891,27 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshWallet();
         RefreshPurchases();
         RefreshSeasonPass();
+        RefreshFlags();
+        RefreshActiveSelection();
+    }
+
+    private void RefreshFlags()
+    {
+        Flags.Clear();
+        var flags = _profileService.GetFlags();
+        foreach (var (name, value) in flags.OrderBy(x => x.Key))
+        {
+            Flags.Add(new FlagItemViewModel(name, value, _profileService));
+        }
+    }
+
+    private void RefreshActiveSelection()
+    {
+        int surferId = _profileService.GetSelectedSurferId();
+        SelectedSurferName = SurferDatabase.GetName(surferId);
+
+        int boardId = _profileService.GetSelectedBoardId();
+        SelectedBoardName = BoardDatabase.GetName(boardId);
     }
 
     private void RefreshSurfers()

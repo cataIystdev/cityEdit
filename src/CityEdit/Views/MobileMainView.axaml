@@ -64,6 +64,8 @@
                                 Click="OnNavClick" Padding="14,8" FontSize="11"/>
                         <Button Classes="nav" Content="SEASON" Tag="6"
                                 Click="OnNavClick" Padding="14,8" FontSize="11"/>
+                        <Button Classes="nav" Content="FLAGS" Tag="7"
+                                Click="OnNavClick" Padding="14,8" FontSize="11"/>
                         <!-- Пустой элемент для отступа справа -->
                         <Panel Width="4"/>
                     </StackPanel>
@@ -145,6 +147,12 @@
                 <ScrollViewer IsVisible="False" x:Name="SeasonTab"
                               HorizontalScrollBarVisibility="Disabled">
                     <views:SeasonPassView DataContext="{Binding}"/>
+                </ScrollViewer>
+
+                <!-- Flags Tab -->
+                <ScrollViewer IsVisible="False" x:Name="FlagsTab"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <views:FlagsView DataContext="{Binding}"/>
                 </ScrollViewer>
             </Panel>
         </Panel>

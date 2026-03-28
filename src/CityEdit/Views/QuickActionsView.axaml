@@ -117,8 +117,44 @@
                             HorizontalAlignment="Stretch" Padding="8,6"
                             FontSize="10"
                             IsEnabled="{Binding IsProfileLoaded}"/>
+                    <Button Content="BONUS TRACKS"
+                            Command="{Binding UnlockBonusTracksCommand}"
+                            HorizontalAlignment="Stretch" Padding="8,6"
+                            FontSize="10"
+                            IsEnabled="{Binding IsProfileLoaded}"/>
+                    <Button Content="SKIP TUTORIAL"
+                            Command="{Binding SkipTutorialCommand}"
+                            HorizontalAlignment="Stretch" Padding="8,6"
+                            FontSize="10"
+                            IsEnabled="{Binding IsProfileLoaded}"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
+
+        <!-- Активный серфер и доска -->
+        <Border Background="#151515" CornerRadius="8" Padding="16" Margin="0,4"
+                BorderBrush="#1E1E1E" BorderThickness="1">
+            <StackPanel Spacing="8">
+                <TextBlock Text="ACTIVE SELECTION" Foreground="#FFFFFF"
+                           FontSize="14" FontWeight="Bold"/>
+
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" Margin="0,4">
+                    <TextBlock Text="Surfer:" Foreground="#808080" FontSize="12"
+                               VerticalAlignment="Center" Margin="0,0,8,4"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding SurferNames}"
+                              SelectedItem="{Binding SelectedSurferName}"
+                              HorizontalAlignment="Stretch" FontSize="11"
+                              IsEnabled="{Binding IsProfileLoaded}"
+                              Margin="0,0,0,4"/>
+
+                    <TextBlock Grid.Row="1" Text="Board:" Foreground="#808080" FontSize="12"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding BoardNames}"
+                              SelectedItem="{Binding SelectedBoardName}"
+                              HorizontalAlignment="Stretch" FontSize="11"
+                              IsEnabled="{Binding IsProfileLoaded}"/>
+                </Grid>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </UserControl>
