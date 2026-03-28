@@ -6,6 +6,8 @@ CityEdit -- кроссплатформенный редактор профиля
 
 Приложение работает на десктопе (Windows, Linux, macOS) и Android. На Android используется Shizuku для доступа к защищенной директории `Android/data` без root-прав.
 
+**[Скачать последний релиз](https://github.com/cataIystdev/cityEdit/releases/latest)**
+
 ## Содержание
 
 - [Возможности](#возможности)

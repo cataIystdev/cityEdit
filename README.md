@@ -6,6 +6,8 @@ CityEdit is a cross-platform profile editor for Subway Surfers City. It decrypts
 
 The application runs on both desktop (Windows, Linux, macOS) and Android. On Android, it uses Shizuku to access the game's protected `Android/data` directory without root.
 
+**[Download latest release](https://github.com/cataIystdev/cityEdit/releases/latest)**
+
 ## Table of Contents
 
 - [Features](#features)

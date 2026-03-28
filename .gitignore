@@ -18,6 +18,9 @@ profile
 # Rider
 *.sln.DotSettings.user
 
+# Distribution builds
+dists/
+
 # Agent/AI
 .agent/
 .agents/
