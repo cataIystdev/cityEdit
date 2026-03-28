@@ -312,6 +312,28 @@ The Android build is configured to use Vulkan as the primary rendering backend w
 5. Press "Save" to write changes to the game's profile file.
 6. Press "Launch Game" to force-stop the game, write the latest profile, and start the game with your changes applied.
 
+## Screenshots
+
+### Desktop
+
+| Surfers | Boards | Wallet |
+|---------|--------|--------|
+| ![Surfers](images/pc_surfers.jpg) | ![Boards](images/pc_boards.jpg) | ![Wallet](images/pc_wallet.jpg) |
+
+| Stats | Purchases | Season Pass |
+|-------|-----------|-------------|
+| ![Stats](images/pc_stats.jpg) | ![Purchases](images/pc_purchases.jpg) | ![Season Pass](images/pc_season.jpg) |
+
+### Android
+
+| Main | Surfers | Boards |
+|------|---------|--------|
+| ![Main](images/phone_main.jpg) | ![Surfers](images/phone_surfers.jpg) | ![Boards](images/phone_boards.jpg) |
+
+| Wallet | Stats | Purchases | Season Pass |
+|--------|-------|-----------|-------------|
+| ![Wallet](images/phone_wallet.jpg) | ![Stats](images/phone_stats.jpg) | ![Purchases](images/phone_purchases.jpg) | ![Season Pass](images/phone_season.jpg) |
+
 ## Credits
 
 **Author:** CatalystDev
