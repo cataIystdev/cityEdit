@@ -77,7 +77,7 @@ The application runs on both desktop (Windows, Linux, macOS) and Android. On And
 
 ## Video Tutorial
 
-https://github.com/user-attachments/assets/tutorial.mp4
+![Video Tutorial](images/tutorial.mp4)
 
 > A video walkthrough demonstrating CityEdit on Android: loading a profile, editing surfer levels, unlocking boards, and saving changes.
 
@@ -365,6 +365,9 @@ https://github.com/user-attachments/assets/tutorial.mp4
 
 **Author:** CatalystDev
 **Contact:** catalyst@raitokyokai.tech
+
+**Acknowledgments:**
+- [Layxtar](https://github.com/Layxtar) - for save editor research and game data structure insights
 
 ## License
 

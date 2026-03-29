@@ -77,7 +77,7 @@ CityEdit -- кроссплатформенный редактор профиля
 
 ## Видео-туториал
 
-https://github.com/user-attachments/assets/tutorial.mp4
+![Video Tutorial](images/tutorial.mp4)
 
 > Видеообзор CityEdit на Android: загрузка профиля, редактирование уровней серферов, разблокировка досок и сохранение изменений.
 
@@ -365,6 +365,9 @@ https://github.com/user-attachments/assets/tutorial.mp4
 
 **Автор:** CatalystDev
 **Контакт:** catalyst@raitokyokai.tech
+
+**Благодарности:**
+- [Layxtar](https://github.com/Layxtar) - за исследование редактора сохранений и информацию о структуре игровых данных
 
 ## Лицензия
 
